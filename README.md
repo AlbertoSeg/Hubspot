@@ -1,6 +1,6 @@
 # Hubspot
 
-Integración Hubspot Fotocasa
+Integración Hubspot Fotocasa. El script que hay que ejecutar está en public/index.php. Se debe introducir en un CRON, y un tiempo adecuado para la repetición del script sería cada hora.
 
 ## Configuración
     
