@@ -1,5 +1,6 @@
 <?php
 require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/../config/parameters.php';
 
 use API\Fotocasa;
 use API\CustomFileStorage;
@@ -21,11 +22,20 @@ if(!$storage->isBootstrapped()) {
     $bucket->bootstrap(0);
 }
 
-$fotocasa = new Fotocasa();
+$fotocasa = new Fotocasa($fotocasa_url_contacts, $owner_id, $auth_user, $auth_password, $platform_channel);
 $contacts = $fotocasa->getContacts();
 $deals = $fotocasa->getDeals();
 
-$hubspot = Factory::create('aa6f8fe3-abe1-448d-911f-0f8b74ec8a59');
+
+$hubspot = Factory::create($api_key_hubspot);
+
+$all = $hubspot->owners()->all();
+
+echo "<pre>";
+print_r($all);
+echo "</pre>";
+exit();
+
 
 foreach ($contacts as $contact) {
     $vid = 0;

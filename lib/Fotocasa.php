@@ -1,6 +1,8 @@
 <?php
 namespace API;
 
+require __DIR__ . '/../config/parameters.php';
+
 /**
  * Fotocasa API.
  *
@@ -9,16 +11,12 @@ namespace API;
  */
 class Fotocasa {
 
-    const URL_CONTACTS = 'http://localhost/hubspot/priv/example.json';
-    const PLATFORM_CHANNEL = 'platform-fotocasa-request'; // Campo que se utilizará como platform_channel
-    const OWNER_ID = '16828781'; // El usuario es de prueba
-    const AUTH_USER = 'prueba'; // Usuario de autenticación de la API de fotocasa
-    const AUTH_PASSWORD = 'prueba'; // Contraseña de autenticación de la API de fotocasa
+    private $fotocasa_url_contacts = null, $owner_id = null, $auth_user = null, $auth_password = null, $platform_channel = null;
 
-    private $contacts = array(), $deals = array(), $transactionTypeDictionary = array();
+    private $contacts = array(), $deals = array();
 
-    public function __construct()
-    {
+    public function __construct($fotocasa_url_contacts, $owner_id, $auth_user, $auth_password, $platform_channel) {
+
         // Fecha de recogida de datos
         $date = new \DateTime();
         $date->modify('-1 day');
@@ -29,7 +27,7 @@ class Fotocasa {
             'type' => 'json'
         );
 
-        $result = $this->makeRequest(Fotocasa::URL_CONTACTS.'?'.http_build_query($query));
+        $result = $this->makeRequest($this->fotocasa_url_contacts.'?'.http_build_query($query));
         $solicitudes = json_decode($result, true);
 
         if(!empty($solicitudes)) {
@@ -54,13 +52,13 @@ class Fotocasa {
                         ),
                         array(
                             "name" => "contact_channel",
-                            "value" => Fotocasa::PLATFORM_CHANNEL
+                            "value" => $this->platform_channel
                         )
                     ),
                     'notes' => array(
                         "engagement" => array(
                             "type" => "NOTE",
-                            "ownerId" => Fotocasa::OWNER_ID,
+                            "ownerId" => $this->owner_id,
                             "active" => true
                         ),
                         "associations" => array(
@@ -111,7 +109,7 @@ class Fotocasa {
     {
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_USERPWD, Fotocasa::AUTH_USER.":".Fotocasa::AUTH_PASSWORD);
+        curl_setopt($ch, CURLOPT_USERPWD, $this->auth_user.":".$this->auth_password);
         curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
             'Content-Type: application/json',

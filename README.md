@@ -4,11 +4,13 @@ Integración Hubspot Fotocasa. El script que hay que ejecutar está en public/in
 
 ## Configuración
     
-  1. Modificar en la clase [Fotocasa](lib/Fotocasa.php) las siguientes constantes:
-     - URL_CONTACTS: Es la URL de la API de contactos de fotocasa 
-     - OWNER_ID: El la ID del usuario de hubspot al que se le asignarán los contactos. Pasará a ser el owner del contacto.
-     - AUTH_USER: Usuario de autenticación de la API de fotocasa
-     - AUTH_PASSWORD: Contraseña de autenticación de la API de fotocasa
+  1. Modificar en el archivo [parameters](config/parameters.php) las siguientes variables:
+     - api_key_hubspot: API Key Hubspot
+     - fotocasa_url_contacts: Es la URL de la API de contactos de fotocasa
+     - platform_channel = 'platform-fotocasa-request'; // Valor que se utilizará como contact_channel
+     - owner_id: Es el ID de usuario de Hubspot que se será quien escriba las notas en los contactos
+     - auth_user: Usuario de autenticación de la API de fotocasa
+     - auth_password: Contraseña de autenticación de la API de fotocasa
     
   2. Ejecutar composer install
   
