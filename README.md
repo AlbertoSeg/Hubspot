@@ -1,8 +1,8 @@
-#Hubspot
+# Hubspot
 
 Integración Hubspot Fotocasa
 
-##Configuración
+## Configuración
     
   1. Modificar en la clase [Fotocasa](lib/Fotocasa.php) las siguientes constantes:
      - URL_CONTACTS: Es la URL de la API de contactos de fotocasa 
