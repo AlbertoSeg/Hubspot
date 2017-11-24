@@ -22,20 +22,12 @@ if(!$storage->isBootstrapped()) {
     $bucket->bootstrap(0);
 }
 
-$fotocasa = new Fotocasa($fotocasa_url_contacts, $owner_id, $auth_user, $auth_password, $platform_channel);
+$fotocasa = new Fotocasa($fotocasa_url_contacts, $fotocasa_owner_id, $fotocasa_auth_user, $fotocasa_auth_password, $fotocasa_platform_channel);
 $contacts = $fotocasa->getContacts();
 $deals = $fotocasa->getDeals();
 
 
 $hubspot = Factory::create($api_key_hubspot);
-
-$all = $hubspot->owners()->all();
-
-echo "<pre>";
-print_r($all);
-echo "</pre>";
-exit();
-
 
 foreach ($contacts as $contact) {
     $vid = 0;
@@ -78,6 +70,14 @@ foreach ($contacts as $contact) {
             if($prop['property'] == 'firstname') {
                 $firstname = $contact_hubspot->properties->firstname->value;
                 if (!empty($firstname)) {
+                    // Pasar a la siguiente propiedad para no incluirla
+                    continue;
+                }
+            }
+
+            if($prop['property'] == 'contact_channel') {
+                $contact_channel = $contact_hubspot->properties->contact_channel->value;
+                if (!empty($contact_channel)) {
                     // Pasar a la siguiente propiedad para no incluirla
                     continue;
                 }
@@ -152,6 +152,4 @@ foreach ($contacts as $contact) {
         }
     }
 }
-
-
-
+?>

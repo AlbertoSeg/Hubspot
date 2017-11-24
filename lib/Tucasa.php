@@ -2,21 +2,17 @@
 namespace API;
 
 /**
- * Fotocasa API. Clase para estandarizar la información recogida desde Fotocasa
+ * Tucasa API. Clase para estandarizar la información recogida desde Tucasa
  *
  * @author Bloo Media <jesus@bloo.media>
  * @version 1.0
  */
-class Fotocasa extends Core {
+class Tucasa extends Core {
 
-    private $auth_user = null, $auth_password = null;
-
-    public function __construct($url, $owner_id, $auth_user, $auth_password, $platform_channel) {
+    public function __construct($url, $owner_id, $platform_channel) {
 
         $this->url = $url;
         $this->owner_id = $owner_id;
-        $this->auth_user = $auth_user;
-        $this->auth_password = $auth_password;
         $this->platform_channel = $platform_channel;
 
         // Fecha de recogida de datos
@@ -29,7 +25,8 @@ class Fotocasa extends Core {
             'type' => 'json'
         );
 
-        $solicitudes = $this->makeRequest($this->url.'?'.http_build_query($query));
+        $result = $this->makeRequest($this->url.'?'.http_build_query($query));
+        $solicitudes = json_decode($result, true);
 
         if(!empty($solicitudes)) {
             $this->fillArrays($solicitudes);
@@ -38,7 +35,7 @@ class Fotocasa extends Core {
 
     private function fillArrays($solicitudes) {
         foreach ($solicitudes as $solicitud) {
-            $this->deals[$solicitud['Email']][] = array(
+            $this->deals[$solicitud['email']][] = array(
                 'notes' => array(
                     "engagement" => array(
                         "type" => "NOTE",
@@ -50,29 +47,29 @@ class Fotocasa extends Core {
                         "contactIds" => array() // Se rellena más adelante, cuando se hace la petición
                     ),
                     "metadata" => array(
-                        "body" => $solicitud['Reference'] . ' - ' . $solicitud['Comments']
+                        "body" => $solicitud['adRef'] . ' - ' . $solicitud['message']
                     )
                 )
             );
 
-            $this->contacts[$solicitud['Email']] = array(
-                'email' => $solicitud['Email'],
+            $this->contacts[$solicitud['email']] = array(
+                'email' => $solicitud['email'],
                 'properties' => array(
                     array(
                         'property' => 'firstname',
-                        'value' => $solicitud['Name']
+                        'value' => $solicitud['name']
                     ),
                     array(
                         'property' => 'phone',
-                        'value' => $solicitud['Phone']
+                        'value' => $solicitud['phone']
                     ),
                     array(
                         'property' => 'listing_interested',
-                        'value' => $solicitud['Reference'] // Se sobreescribe siempre
+                        'value' => $solicitud['adRef'] // Se sobreescribe siempre
                     ),
                     array(
                         'property' => 'message',
-                        'value' => $solicitud['Comments'] // Se sobreescribe siempre
+                        'value' => $solicitud['message'] // Se sobreescribe siempre
                     ),
                     array(
                         "property" => "contact_channel",
@@ -83,20 +80,15 @@ class Fotocasa extends Core {
         }
     }
 
-    private function makeRequest($url)
-    {
+    private function makeRequest($url) {
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_USERPWD, $this->auth_user.":".$this->auth_password);
-        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
             'Content-Type: application/json',
         ));
 
-        $resultJson = curl_exec($ch);
+        $result = curl_exec($ch);
         curl_close($ch);
-
-        $result = json_decode($resultJson, true);
 
         return $result;
     }

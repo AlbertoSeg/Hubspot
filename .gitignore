@@ -58,6 +58,7 @@ $RECYCLE.BIN/
 .*
 !.gitignore
 !.htaccess
+!.gitkeep
 *~
  
 # Mac OS X
